@@ -10,15 +10,18 @@ const MockInterview = ({ userId }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log("🔄 useEffect triggered → fetching interview questions");
     fetchQuestions();
   }, []);
 
   const fetchQuestions = async () => {
     try {
+      console.log("📡 API call → /api/interview/questions");
       const data = await apiCall('/api/interview/questions');
+      console.log("✅ API response (questions):", data);
       setQuestions(data.questions);
     } catch (error) {
-      console.error('Error fetching questions:', error);
+      console.error('❌ Error fetching questions:', error);
     }
   };
 
@@ -28,11 +31,16 @@ const MockInterview = ({ userId }) => {
       return;
     }
 
+    console.log("📤 Submitting answer:", {
+      question: questions[currentQuestionIndex]?.question,
+      answer,
+      user_id: userId
+    });
+
     setLoading(true);
     try {
       const response = await apiCall('/api/interview/answer', {
         method: 'POST',
-     
         body: JSON.stringify({
           question: questions[currentQuestionIndex].question,
           answer: answer,
@@ -40,26 +48,30 @@ const MockInterview = ({ userId }) => {
         })
       });
 
-      const data = await response.json();
-      
+      console.log("✅ API response (answer evaluation):", response);
+
       const newResult = {
         question: questions[currentQuestionIndex].question,
         answer: answer,
-        score: data.score,
-        feedback: data.feedback,
-        suggestions: data.suggestions
+        score: response.score,
+        feedback: response.feedback,
+        suggestions: response.suggestions
       };
+
+      console.log("📊 New result:", newResult);
 
       setResults([...results, newResult]);
       setAnswer('');
 
       if (currentQuestionIndex < questions.length - 1) {
+        console.log(`➡️ Moving to next question (${currentQuestionIndex + 1})`);
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
+        console.log("🎉 All questions answered → showing results");
         setShowResults(true);
       }
     } catch (error) {
-      console.error('Error submitting answer:', error);
+      console.error('❌ Error submitting answer:', error);
       alert('Error submitting answer. Please try again.');
     } finally {
       setLoading(false);
@@ -67,6 +79,7 @@ const MockInterview = ({ userId }) => {
   };
 
   const startNewInterview = () => {
+    console.log("🔄 Restarting interview");
     setCurrentQuestionIndex(0);
     setAnswer('');
     setResults([]);
