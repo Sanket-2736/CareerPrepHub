@@ -10,7 +10,6 @@ import random
 import json
 from gemini_runner import run
 
-# SQLAlchemy
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
@@ -18,7 +17,6 @@ from models import User as UserModel, Resume as ResumeModel, UserProgress as Use
 
 app = FastAPI(title="CareerPrep Hub API", version="1.0.0")
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -70,21 +68,17 @@ class Resume(BaseModel):
     github: Optional[str] = None
     portfolio: Optional[str] = None
 
-    # Education & Experience
     education: List[dict]   # [{"degree": "B.Tech", "institution": "XYZ Univ", "year": "2023"}]
     experience: List[dict]  # [{"company": "ABC", "role": "Dev", "years": "2"}]
 
-    # Projects & Skills
     projects: Optional[List[dict]] = None  # [{"title": "AI Chatbot", "description": "..."}]
     certifications: Optional[List[str]] = None
     skills: List[str]
     summary: Optional[str] = None
 
-    # Achievements
     awards: Optional[List[str]] = None
     publications: Optional[List[str]] = None
 
-    # Preferences
     languages: Optional[List[str]] = None
     interests: Optional[List[str]] = None
 
@@ -113,7 +107,6 @@ class UserProgress(BaseModel):
     practice_score: int = 0
 
 
-# Utils
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -172,7 +165,6 @@ async def get_current_active_user(current_user: UserModel = Depends(get_current_
     return current_user
 
 
-# Mock data
 INTERVIEW_QUESTIONS = [
     {"id": 1, "question": "Tell me about yourself.", "type": "general"},
     {"id": 2, "question": "What are your strengths and weaknesses?", "type": "general"},
@@ -314,51 +306,50 @@ PRACTICE_QUESTIONS = [
     {"id": 60, "question": "For communicating clearly, what's most important?", "options": ["Being vague", "Active listening", "Ignoring feedback", "Monologue"], "correct_answer": "Active listening", "category": "HR"},
 
     {"id": 61, "question": "Which data structure uses FIFO?", "options": ["Stack", "Queue", "Tree", "Graph"], "correct_answer": "Queue", "category": "Technical"},
-{"id": 62, "question": "What is the extension of a Python file?", "options": [".pyt", ".py", ".pt", ".python"], "correct_answer": ".py", "category": "Technical"},
-{"id": 63, "question": "What does HTML stand for?", "options": ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "Hyper Text Marketing Language", "Hyperlink Text Markup Language"], "correct_answer": "Hyper Text Markup Language", "category": "Technical"},
-{"id": 64, "question": "Which planet is known as the Red Planet?", "options": ["Earth", "Mars", "Jupiter", "Venus"], "correct_answer": "Mars", "category": "Aptitude"},
-{"id": 65, "question": "Which number is a perfect square: 16, 18, 20, 22?", "options": ["16", "18", "20", "22"], "correct_answer": "16", "category": "Aptitude"},
-{"id": 66, "question": "If an item costs ₹150 and is sold for ₹200, what is the profit percent?", "options": ["25%", "30%", "33%", "40%"], "correct_answer": "33%", "category": "Aptitude"},
-{"id": 67, "question": "The probability of getting heads in a coin toss is?", "options": ["1/2", "1/3", "1/4", "1"], "correct_answer": "1/2", "category": "Aptitude"},
-{"id": 68, "question": "Which function finds minimum value in Excel?", "options": ["MIN()", "MAX()", "AVERAGE()", "COUNT()"], "correct_answer": "MIN()", "category": "Technical"},
-{"id": 69, "question": "Which SQL keyword sorts the result?", "options": ["SORT", "ORDER BY", "GROUP BY", "SELECT"], "correct_answer": "ORDER BY", "category": "Technical"},
-{"id": 70, "question": "A triangle with sides 3, 4, 5 is called?", "options": ["Equilateral", "Isosceles", "Right-angled", "Obtuse"], "correct_answer": "Right-angled", "category": "Aptitude"},
-
-{"id": 71, "question": "If 5x = 20, then x=?", "options": ["2", "3", "4", "5"], "correct_answer": "4", "category": "Aptitude"},
-{"id": 72, "question": "In Java, which keyword is used to create an object?", "options": ["object", "class", "new", "create"], "correct_answer": "new", "category": "Technical"},
-{"id": 73, "question": "What does RAM stand for?", "options": ["Random Access Memory", "Rarely Accessed Memory", "Read And Modify", "Read Access Module"], "correct_answer": "Random Access Memory", "category": "Technical"},
-{"id": 74, "question": "Which symbol is used for comments in Python?", "options": ["//", "#", "<!--", ";"], "correct_answer": "#", "category": "Technical"},
-{"id": 75, "question": "If a bike travels 18 km in 45 minutes, speed is?", "options": ["24 km/h", "36 km/h", "18 km/h", "30 km/h"], "correct_answer": "24 km/h", "category": "Aptitude"},
-{"id": 76, "question": "Which gas do plants absorb from air?", "options": ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"], "correct_answer": "Carbon dioxide", "category": "Aptitude"},
-{"id": 77, "question": "A leap year has how many days?", "options": ["364", "365", "366", "367"], "correct_answer": "366", "category": "Aptitude"},
-{"id": 78, "question": "Which keyword is used to define a function in Python?", "options": ["function", "def", "fun", "define"], "correct_answer": "def", "category": "Technical"},
-{"id": 79, "question": "Which data structure is used in BFS traversal?", "options": ["Stack", "Queue", "Tree", "Graph"], "correct_answer": "Queue", "category": "Technical"},
-{"id": 80, "question": "What is the cube root of 64?", "options": ["2", "4", "6", "8"], "correct_answer": "4", "category": "Aptitude"},
-
-{"id": 81, "question": "Which is a binary number: 101, 256, 1A2, 999?", "options": ["101", "256", "1A2", "999"], "correct_answer": "101", "category": "Technical"},
-{"id": 82, "question": "What is the value of π (pi) up to two decimal places?", "options": ["3.12", "3.14", "3.16", "3.18"], "correct_answer": "3.14", "category": "Aptitude"},
-{"id": 83, "question": "Which HTML tag is used for a hyperlink?", "options": ["<link>", "<a>", "<href>", "<hyper>"], "correct_answer": "<a>", "category": "Technical"},
-{"id": 84, "question": "Which is not an example of an operating system: Linux, Windows, Oracle, MacOS?", "options": ["Linux", "Windows", "Oracle", "MacOS"], "correct_answer": "Oracle", "category": "Technical"},
-{"id": 85, "question": "What is the boiling point of water?", "options": ["80°C", "90°C", "100°C", "120°C"], "correct_answer": "100°C", "category": "Aptitude"},
-{"id": 86, "question": "Which is the largest organ in the human body?", "options": ["Heart", "Liver", "Skin", "Brain"], "correct_answer": "Skin", "category": "Aptitude"},
-{"id": 87, "question": "In a meeting, someone interrupts you frequently. What do you do?", "options": ["Ignore and continue", "Confront angrily", "Request to speak after", "Leave the meeting"], "correct_answer": "Request to speak after", "category": "HR"},
-{"id": 88, "question": "If a team misses a project deadline, you should?", "options": ["Blame team", "Find root cause", "Ignore", "Punish team"], "correct_answer": "Find root cause", "category": "HR"},
-{"id": 89, "question": "Which color is created by mixing red and white?", "options": ["Pink", "Orange", "Purple", "Brown"], "correct_answer": "Pink", "category": "Aptitude"},
-{"id": 90, "question": "Which Indian festival is known as the festival of lights?", "options": ["Holi", "Diwali", "Eid", "Christmas"], "correct_answer": "Diwali", "category": "Aptitude"},
-
-{"id": 91, "question": "If a supervisor gives you unclear instructions, you should?", "options": ["Assume and proceed", "Seek clarification", "Complain to HR", "Ignore task"], "correct_answer": "Seek clarification", "category": "HR"},
-{"id": 92, "question": "You receive critical feedback. What will you do?", "options": ["Ignore", "Get defensive", "Evaluate and improve", "Retaliate"], "correct_answer": "Evaluate and improve", "category": "HR"},
-{"id": 93, "question": "Which shape has 5 sides?", "options": ["Triangle", "Square", "Pentagon", "Hexagon"], "correct_answer": "Pentagon", "category": "Aptitude"},
-{"id": 94, "question": "Which programming language is known for web development?", "options": ["Python", "Java", "JavaScript", "C++"], "correct_answer": "JavaScript", "category": "Technical"},
-{"id": 95, "question": "How many degrees in a right angle?", "options": ["45", "60", "90", "180"], "correct_answer": "90", "category": "Aptitude"},
-{"id": 96, "question": "What should you do if your team faces a conflict?", "options": ["Avoid it", "Mediate and resolve", "Ignore issue", "Take sides"], "correct_answer": "Mediate and resolve", "category": "HR"},
-{"id": 97, "question": "How many continents are there in the world?", "options": ["5", "6", "7", "8"], "correct_answer": "7", "category": "Aptitude"},
-{"id": 98, "question": "What does URL stand for?", "options": ["Uniform Resource Locator", "Unified Reference Link", "Universal Refresh Link", "Useful Resource Locator"], "correct_answer": "Uniform Resource Locator", "category": "Technical"},
-{"id": 99, "question": "If rainfall in June was 120 mm and in July 150 mm, what is the increase?", "options": ["30 mm", "40 mm", "50 mm", "60 mm"], "correct_answer": "30 mm", "category": "Aptitude"},
-{"id": 100, "question": "Which HR practice fosters open communication?", "options": ["Encouraging silence", "Open-door policy", "Centralised decision", "Rigid hierarchy"], "correct_answer": "Open-door policy", "category": "HR"}
+    {"id": 62, "question": "What is the extension of a Python file?", "options": [".pyt", ".py", ".pt", ".python"], "correct_answer": ".py", "category": "Technical"},
+    {"id": 63, "question": "What does HTML stand for?", "options": ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "Hyper Text Marketing Language", "Hyperlink Text Markup Language"], "correct_answer": "Hyper Text Markup Language", "category": "Technical"},
+    {"id": 64, "question": "Which planet is known as the Red Planet?", "options": ["Earth", "Mars", "Jupiter", "Venus"], "correct_answer": "Mars", "category": "Aptitude"},
+    {"id": 65, "question": "Which number is a perfect square: 16, 18, 20, 22?", "options": ["16", "18", "20", "22"], "correct_answer": "16", "category": "Aptitude"},
+    {"id": 66, "question": "If an item costs ₹150 and is sold for ₹200, what is the profit percent?", "options": ["25%", "30%", "33%", "40%"], "correct_answer": "33%", "category": "Aptitude"},
+    {"id": 67, "question": "The probability of getting heads in a coin toss is?", "options": ["1/2", "1/3", "1/4", "1"], "correct_answer": "1/2", "category": "Aptitude"},
+    {"id": 68, "question": "Which function finds minimum value in Excel?", "options": ["MIN()", "MAX()", "AVERAGE()", "COUNT()"], "correct_answer": "MIN()", "category": "Technical"},
+    {"id": 69, "question": "Which SQL keyword sorts the result?", "options": ["SORT", "ORDER BY", "GROUP BY", "SELECT"], "correct_answer": "ORDER BY", "category": "Technical"},
+    {"id": 70, "question": "A triangle with sides 3, 4, 5 is called?", "options": ["Equilateral", "Isosceles", "Right-angled", "Obtuse"], "correct_answer": "Right-angled", "category": "Aptitude"},
+    
+    {"id": 71, "question": "If 5x = 20, then x=?", "options": ["2", "3", "4", "5"], "correct_answer": "4", "category": "Aptitude"},
+    {"id": 72, "question": "In Java, which keyword is used to create an object?", "options": ["object", "class", "new", "create"], "correct_answer": "new", "category": "Technical"},
+    {"id": 73, "question": "What does RAM stand for?", "options": ["Random Access Memory", "Rarely Accessed Memory", "Read And Modify", "Read Access Module"], "correct_answer": "Random Access Memory", "category": "Technical"},
+    {"id": 74, "question": "Which symbol is used for comments in Python?", "options": ["//", "#", "<!--", ";"], "correct_answer": "#", "category": "Technical"},
+    {"id": 75, "question": "If a bike travels 18 km in 45 minutes, speed is?", "options": ["24 km/h", "36 km/h", "18 km/h", "30 km/h"], "correct_answer": "24 km/h", "category": "Aptitude"},
+    {"id": 76, "question": "Which gas do plants absorb from air?", "options": ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"], "correct_answer": "Carbon dioxide", "category": "Aptitude"},
+    {"id": 77, "question": "A leap year has how many days?", "options": ["364", "365", "366", "367"], "correct_answer": "366", "category": "Aptitude"},
+    {"id": 78, "question": "Which keyword is used to define a function in Python?", "options": ["function", "def", "fun", "define"], "correct_answer": "def", "category": "Technical"},
+    {"id": 79, "question": "Which data structure is used in BFS traversal?", "options": ["Stack", "Queue", "Tree", "Graph"], "correct_answer": "Queue", "category": "Technical"},
+    {"id": 80, "question": "What is the cube root of 64?", "options": ["2", "4", "6", "8"], "correct_answer": "4", "category": "Aptitude"},
+    
+    {"id": 81, "question": "Which is a binary number: 101, 256, 1A2, 999?", "options": ["101", "256", "1A2", "999"], "correct_answer": "101", "category": "Technical"},
+    {"id": 82, "question": "What is the value of π (pi) up to two decimal places?", "options": ["3.12", "3.14", "3.16", "3.18"], "correct_answer": "3.14", "category": "Aptitude"},
+    {"id": 83, "question": "Which HTML tag is used for a hyperlink?", "options": ["<link>", "<a>", "<href>", "<hyper>"], "correct_answer": "<a>", "category": "Technical"},
+    {"id": 84, "question": "Which is not an example of an operating system: Linux, Windows, Oracle, MacOS?", "options": ["Linux", "Windows", "Oracle", "MacOS"], "correct_answer": "Oracle", "category": "Technical"},
+    {"id": 85, "question": "What is the boiling point of water?", "options": ["80°C", "90°C", "100°C", "120°C"], "correct_answer": "100°C", "category": "Aptitude"},
+    {"id": 86, "question": "Which is the largest organ in the human body?", "options": ["Heart", "Liver", "Skin", "Brain"], "correct_answer": "Skin", "category": "Aptitude"},
+    {"id": 87, "question": "In a meeting, someone interrupts you frequently. What do you do?", "options": ["Ignore and continue", "Confront angrily", "Request to speak after", "Leave the meeting"], "correct_answer": "Request to speak after", "category": "HR"},
+    {"id": 88, "question": "If a team misses a project deadline, you should?", "options": ["Blame team", "Find root cause", "Ignore", "Punish team"], "correct_answer": "Find root cause", "category": "HR"},
+    {"id": 89, "question": "Which color is created by mixing red and white?", "options": ["Pink", "Orange", "Purple", "Brown"], "correct_answer": "Pink", "category": "Aptitude"},
+    {"id": 90, "question": "Which Indian festival is known as the festival of lights?", "options": ["Holi", "Diwali", "Eid", "Christmas"], "correct_answer": "Diwali", "category": "Aptitude"},
+    
+    {"id": 91, "question": "If a supervisor gives you unclear instructions, you should?", "options": ["Assume and proceed", "Seek clarification", "Complain to HR", "Ignore task"], "correct_answer": "Seek clarification", "category": "HR"},
+    {"id": 92, "question": "You receive critical feedback. What will you do?", "options": ["Ignore", "Get defensive", "Evaluate and improve", "Retaliate"], "correct_answer": "Evaluate and improve", "category": "HR"},
+    {"id": 93, "question": "Which shape has 5 sides?", "options": ["Triangle", "Square", "Pentagon", "Hexagon"], "correct_answer": "Pentagon", "category": "Aptitude"},
+    {"id": 94, "question": "Which programming language is known for web development?", "options": ["Python", "Java", "JavaScript", "C++"], "correct_answer": "JavaScript", "category": "Technical"},
+    {"id": 95, "question": "How many degrees in a right angle?", "options": ["45", "60", "90", "180"], "correct_answer": "90", "category": "Aptitude"},
+    {"id": 96, "question": "What should you do if your team faces a conflict?", "options": ["Avoid it", "Mediate and resolve", "Ignore issue", "Take sides"], "correct_answer": "Mediate and resolve", "category": "HR"},
+    {"id": 97, "question": "How many continents are there in the world?", "options": ["5", "6", "7", "8"], "correct_answer": "7", "category": "Aptitude"},
+    {"id": 98, "question": "What does URL stand for?", "options": ["Uniform Resource Locator", "Unified Reference Link", "Universal Refresh Link", "Useful Resource Locator"], "correct_answer": "Uniform Resource Locator", "category": "Technical"},
+    {"id": 99, "question": "If rainfall in June was 120 mm and in July 150 mm, what is the increase?", "options": ["30 mm", "40 mm", "50 mm", "60 mm"], "correct_answer": "30 mm", "category": "Aptitude"},
+    {"id": 100, "question": "Which HR practice fosters open communication?", "options": ["Encouraging silence", "Open-door policy", "Centralised decision", "Rigid hierarchy"], "correct_answer": "Open-door policy", "category": "HR"}
 ]
 
-# Auth Endpoints
 @app.post("/api/auth/register", status_code=201)
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     existing_user = await get_user_by_username(db, user.username)
@@ -417,9 +408,8 @@ async def logout(current_user: UserModel = Depends(get_current_active_user)):
     return {"message": "Successfully logged out"}
 
 
-# Resume Endpoints
 import json
-
+https://github.com/Sanket-2736/CareerPrepHub/blob/main/backend/app.py
 @app.get("/api/resume/{resume_id}")
 async def get_resume(
     resume_id: int,
